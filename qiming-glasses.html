@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>"启明"智能眼镜 — 让光明触手可及</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:    #F26522;
+      --orange-lt: #FFF3E8;
+      --orange-dk: #D94F10;
+      --amber:     #FFAA44;
+      --blue:      #3b82f6;
+      --blue-lt:   #eff6ff;
+      --green:     #22c55e;
+      --green-lt:  #f0fdf4;
+      --red:       #ef4444;
+      --red-lt:    #fff0f0;
+      --purple:    #8b5cf6;
+      --purple-lt: #f5f3ff;
+      --text:      #1a1a2e;
+      --sub:       #64748b;
+      --border:    #e8ecf0;
+      --bg:        #f8f9fc;
+      --white:     #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.15rem; font-weight: 700; color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1rem;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--sub); font-size: 0.9rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      color: #fff; border: none; border-radius: 22px;
+      padding: 9px 24px; font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: opacity .2s, transform .2s;
+    }
+    .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: linear-gradient(150deg, #fff9f5 0%, #ffffff 45%, #f0f7ff 100%);
+      padding: 90px 5% 80px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 60px; flex-wrap: wrap;
+    }
+    .hero-text { flex: 1; min-width: 280px; max-width: 580px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--orange-lt); color: var(--orange);
+      border: 1px solid rgba(242,101,34,.2);
+      border-radius: 20px; padding: 5px 14px; font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .hero-badge::before { content: '●'; font-size: .55rem; animation: blink 1.8s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .hero h1 { font-size: clamp(1.9rem, 3.5vw, 3rem); font-weight: 800; line-height: 1.25; letter-spacing: -.02em; margin-bottom: 18px; }
+    .hero h1 em { font-style: normal; background: linear-gradient(90deg, var(--orange), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--sub); font-size: 1.02rem; line-height: 1.8; max-width: 480px; margin-bottom: 32px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      color: #fff; border: none; border-radius: 26px;
+      padding: 13px 32px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(242,101,34,.32);
+      transition: all .2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(242,101,34,.4); }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1.5px solid var(--border); border-radius: 26px;
+      padding: 13px 28px; font-size: 0.95rem; font-weight: 500; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+    .hero-stats { display: flex; gap: 36px; margin-top: 44px; flex-wrap: wrap; }
+    .hero-stat-val { font-size: 1.9rem; font-weight: 800; color: var(--orange); }
+    .hero-stat-label { font-size: 0.78rem; color: var(--sub); margin-top: 2px; }
+
+    /* Hero 右侧眼镜图示 */
+    .hero-visual {
+      flex: 1; min-width: 260px; max-width: 440px;
+      position: relative;
+    }
+    .hero-device {
+      width: 100%; aspect-ratio: 4/3;
+      background: linear-gradient(145deg, #fff8f0, #ffe8d0);
+      border-radius: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1.5px solid rgba(242,101,34,.12);
+      box-shadow: 0 24px 60px rgba(242,101,34,.12), 0 4px 12px rgba(0,0,0,.06);
+      position: relative; overflow: hidden;
+    }
+    .glasses-svg-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 18px;
+    }
+    .glasses-icon { font-size: 5rem; filter: drop-shadow(0 4px 12px rgba(242,101,34,.3)); }
+    .glasses-label {
+      font-size: 0.82rem; font-weight: 700; color: var(--orange);
+      letter-spacing: .1em; text-transform: uppercase;
+    }
+    .glasses-dots {
+      display: flex; gap: 6px;
+    }
+    .glasses-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--orange); opacity: .3;
+    }
+    .glasses-dots span:nth-child(2) { opacity: .6; }
+    .glasses-dots span:nth-child(3) { opacity: 1; }
+    /* 浮动徽章 */
+    .float-badge {
+      position: absolute;
+      background: white;
+      border-radius: 12px;
+      padding: 10px 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.10);
+      font-size: 0.78rem;
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 600;
+    }
+    .float-badge.top-right { top: -12px; right: -12px; }
+    .float-badge.bottom-left { bottom: -12px; left: -12px; }
+    .float-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ─── SECTION COMMON ─── */
+    section { padding: 80px 5%; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--orange); font-size: 0.82rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-label::before { content: ''; width: 20px; height: 2px; background: var(--orange); border-radius: 1px; }
+    .section-title { font-size: clamp(1.5rem, 2.8vw, 2.2rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 14px; }
+    .section-sub { color: var(--sub); font-size: 1rem; max-width: 520px; line-height: 1.75; margin-bottom: 48px; }
+
+    /* ─── STATS STRIP ─── */
+    .stats-strip {
+      background: linear-gradient(135deg, var(--orange), #ff9a55, var(--amber));
+      padding: 52px 5%;
+      display: flex; justify-content: center; gap: 0; flex-wrap: wrap;
+    }
+    .stat-block {
+      flex: 1; min-width: 160px; max-width: 240px;
+      text-align: center; padding: 16px 24px; position: relative;
+    }
+    .stat-block + .stat-block::before {
+      content: '';
+      position: absolute; left: 0; top: 20%; height: 60%;
+      width: 1px; background: rgba(255,255,255,.25);
+    }
+    .stat-num { font-size: 2.4rem; font-weight: 900; color: #fff; line-height: 1; }
+    .stat-unit { font-size: 1rem; font-weight: 700; color: rgba(255,255,255,.75); }
+    .stat-desc { font-size: 0.82rem; color: rgba(255,255,255,.7); margin-top: 8px; }
+
+    /* ─── FEATURES ─── */
+    .features-bg { background: var(--white); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 28px 28px 24px;
+      display: flex; gap: 22px; align-items: flex-start;
+      transition: all .25s; position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(242,101,34,.04), transparent 60%);
+      opacity: 0; transition: opacity .25s;
+    }
+    .feature-card:hover { border-color: rgba(242,101,34,.3); box-shadow: 0 12px 36px rgba(242,101,34,.10); transform: translateY(-3px); }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-img-wrap {
+      flex-shrink: 0;
+      width: 120px; height: 120px;
+      border-radius: 16px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* 图示 — 轻盈外观 */
+    .img-lightweight {
+      background: linear-gradient(145deg, #fff8f0, #ffe0c0);
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.2rem;
+    }
+    /* 图示 — 视觉核心 */
+    .img-vision {
+      background: linear-gradient(145deg, #eff6ff, #dbeafe);
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .camera-body {
+      width: 72px; height: 56px;
+      background: linear-gradient(160deg, #2d3250, #1a1a2e);
+      border-radius: 10px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      position: relative;
+    }
+    .camera-lens {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #6ea8fe, #1d4ed8);
+      box-shadow: 0 0 0 4px rgba(59,130,246,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; color: #fff;
+    }
+    .camera-flash { width: 6px; height: 6px; border-radius: 50%; background: #fbbf24; position: absolute; top: 6px; right: 6px; }
+    /* 图示 — 主动安全 */
+    .img-safety {
+      background: linear-gradient(145deg, #fff0f0, #ffd6d6);
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .safety-ring {
+      width: 76px; height: 76px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fb923c, #ea580c);
+      box-shadow: 0 0 0 6px rgba(251,146,60,.15), 0 0 0 12px rgba(251,146,60,.07);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+    }
+    /* 图示 — 实时避障 */
+    .img-radar {
+      background: #0a0f1e;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .radar-circle {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(242,101,34,.3);
+    }
+    .radar-circle.r1 { width: 88px; height: 88px; }
+    .radar-circle.r2 { width: 62px; height: 62px; }
+    .radar-circle.r3 { width: 36px; height: 36px; }
+    .radar-sweep {
+      position: absolute;
+      width: 44px; height: 44px;
+      background: conic-gradient(rgba(242,101,34,.7) 0deg, transparent 80deg);
+      border-radius: 50%;
+      animation: sweep 2s linear infinite;
+      transform-origin: center;
+    }
+    @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    .radar-dot { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--orange); top: 28px; left: 60px; }
+    /* 图示 — 跌倒预警 */
+    .img-fall {
+      background: linear-gradient(145deg, #f5f3ff, #ede9fe);
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* 图示 — 远程协助 */
+    .img-remote {
+      background: linear-gradient(145deg, #f0fdf4, #dcfce7);
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+    }
+    /* 图示 — AI语音 */
+    .img-ai {
+      background: linear-gradient(145deg, #1a1a2e, #2d3250);
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ai-waves {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .ai-waves span {
+      width: 4px; border-radius: 3px;
+      background: var(--orange);
+      animation: wave 1.2s ease-in-out infinite;
+    }
+    .ai-waves span:nth-child(1) { height: 18px; animation-delay: 0s; }
+    .ai-waves span:nth-child(2) { height: 30px; animation-delay: .15s; }
+    .ai-waves span:nth-child(3) { height: 44px; animation-delay: .3s; }
+    .ai-waves span:nth-child(4) { height: 30px; animation-delay: .45s; }
+    .ai-waves span:nth-child(5) { height: 18px; animation-delay: .6s; }
+    @keyframes wave { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
+
+    .feature-body { flex: 1; }
+    .feature-num { font-size: 0.8rem; font-weight: 700; color: var(--sub); letter-spacing: .06em; margin-bottom: 8px; }
+    .feature-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .feature-title { font-size: 1.05rem; font-weight: 800; color: var(--text); white-space: nowrap; }
+    .feature-divider { width: 1px; height: 16px; background: var(--border); }
+    .feature-tag {
+      font-size: 0.73rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 6px; white-space: nowrap;
+    }
+    .tag-orange { background: var(--orange-lt); color: var(--orange); }
+    .tag-blue   { background: var(--blue-lt);   color: #1d4ed8; }
+    .tag-red    { background: var(--red-lt);     color: #dc2626; }
+    .tag-green  { background: var(--green-lt);   color: #16a34a; }
+    .tag-purple { background: var(--purple-lt);  color: #6d28d9; }
+    .feature-desc { font-size: 0.88rem; color: var(--sub); line-height: 1.78; }
+
+    /* ─── HOW IT WORKS ─── */
+    .how-bg { background: var(--bg); }
+    .steps {
+      display: flex; gap: 0; flex-wrap: wrap; align-items: flex-start;
+      position: relative;
+    }
+    .step {
+      flex: 1; min-width: 180px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 0 20px; position: relative;
+    }
+    .step + .step::before {
+      content: '→';
+      position: absolute; left: -12px; top: 28px;
+      font-size: 1.4rem; color: var(--orange); opacity: .5;
+    }
+    .step-icon {
+      width: 60px; height: 60px;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin-bottom: 16px;
+      background: var(--white);
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
+    }
+    .step-num { font-size: 0.72rem; font-weight: 700; color: var(--orange); letter-spacing: .06em; margin-bottom: 8px; }
+    .step-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+    .step-desc { font-size: 0.82rem; color: var(--sub); line-height: 1.7; }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-bg { background: var(--white); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .testimonial-card {
+      background: var(--bg); border-radius: 18px;
+      padding: 24px; position: relative;
+    }
+    .testimonial-card::before {
+      content: '"';
+      position: absolute; top: 12px; right: 20px;
+      font-size: 3.5rem; color: rgba(242,101,34,.12);
+      font-family: Georgia, serif; line-height: 1;
+    }
+    .stars { color: #f59e0b; font-size: 0.9rem; margin-bottom: 12px; letter-spacing: 2px; }
+    .testimonial-text { font-size: 0.9rem; color: var(--sub); line-height: 1.8; margin-bottom: 18px; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; background: var(--orange-lt);
+    }
+    .author-name { font-size: 0.88rem; font-weight: 700; }
+    .author-desc { font-size: 0.74rem; color: var(--sub); }
+
+    /* ─── CTA ─── */
+    .cta-section {
+      background: linear-gradient(150deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      padding: 90px 5%; text-align: center;
+    }
+    .cta-section h2 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 800; color: #fff;
+      margin-bottom: 14px; letter-spacing: -.02em;
+    }
+    .cta-section h2 em {
+      font-style: normal;
+      background: linear-gradient(90deg, var(--orange), var(--amber));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .cta-section p { color: rgba(255,255,255,.55); font-size: 0.98rem; max-width: 440px; margin: 0 auto 32px; }
+    .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-white {
+      background: #fff; color: var(--text);
+      border: none; border-radius: 26px;
+      padding: 13px 32px; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,.2); }
+    .btn-outline-white {
+      background: transparent; color: #fff;
+      border: 1.5px solid rgba(255,255,255,.3);
+      border-radius: 26px; padding: 13px 28px;
+      font-size: 0.95rem; font-weight: 500; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-outline-white:hover { border-color: #fff; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #0d0f14;
+      padding: 40px 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo { color: #fff; font-size: 1rem; font-weight: 700; }
+    .footer-logo span { color: var(--orange); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { color: rgba(255,255,255,.4); font-size: 0.8rem; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: rgba(255,255,255,.8); }
+    .footer-copy { color: rgba(255,255,255,.25); font-size: 0.75rem; }
+
+    /* ─── FADE IN ─── */
+    .fade { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+    .fade.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 680px) {
+      .nav-links { display: none; }
+      .hero { flex-direction: column; padding: 60px 5%; }
+      .stats-strip { gap: 0; }
+      .step + .step::before { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">👓</div>
+    启明
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">产品功能</a></li>
+    <li><a href="#how">使用流程</a></li>
+    <li><a href="#reviews">用户评价</a></li>
+    <li><a href="#contact">立即购买</a></li>
+  </ul>
+  <button class="nav-cta">预约体验 →</button>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-text fade">
+    <div class="hero-badge">启明智能眼镜 · 视障辅助新纪元</div>
+    <h1>让世界<em>重新可见</em><br/>触手可及</h1>
+    <p>融合高清双目视觉、毫米波雷达避障、AI 语音陪伴与跌倒预警四大核心能力，专为视障人士打造的全天候智能守护伴侣。</p>
+    <div class="hero-actions">
+      <button class="btn-primary">立即了解</button>
+      <button class="btn-ghost">观看演示 ▷</button>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">99.2%</div>
+        <div class="hero-stat-label">障碍识别准确率</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">50ms</div>
+        <div class="hero-stat-label">毫秒级雷达响应</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">24h</div>
+        <div class="hero-stat-label">续航全天守护</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual fade">
+    <div class="hero-device">
+      <div class="glasses-svg-wrap">
+        <div class="glasses-icon">🥽</div>
+        <div class="glasses-label">Qiming Smart Glasses</div>
+        <div class="glasses-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+    <div class="float-badge top-right">
+      <div class="float-dot" style="background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.2)"></div>
+      雷达探测中
+    </div>
+    <div class="float-badge bottom-left">
+      <span style="font-size:1rem">🎙️</span>
+      AI 语音就绪
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ─── -->
+<div class="stats-strip">
+  <div class="stat-block fade">
+    <div><span class="stat-num">10</span><span class="stat-unit">万+</span></div>
+    <div class="stat-desc">视障用户信赖</div>
+  </div>
+  <div class="stat-block fade">
+    <div><span class="stat-num">320</span><span class="stat-unit">万+</span></div>
+    <div class="stat-desc">成功避障次数</div>
+  </div>
+  <div class="stat-block fade">
+    <div><span class="stat-num">4.9</span><span class="stat-unit">分</span></div>
+    <div class="stat-desc">用户综合评分</div>
+  </div>
+  <div class="stat-block fade">
+    <div><span class="stat-num">200</span><span class="stat-unit">+</span></div>
+    <div class="stat-desc">城市合作机构</div>
+  </div>
+</div>
+
+<!-- ─── FEATURES ─── -->
+<section id="features" class="features-bg">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-label">产品功能</div>
+    <div class="section-title">七重能力，全面守护</div>
+    <div class="section-sub">每项功能均经过视障人士真实场景验证，从硬件到软件，为每一步出行保驾护航。</div>
+
+    <div class="features-grid">
+
+      <!-- 01 轻盈外观 -->
+      <div class="feature-card fade">
+        <div class="feature-img-wrap">
+          <div class="img-lightweight">👓</div>
+        </div>
+        <div class="feature-body">
+          <div class="feature-num">01.</div>
+          <div class="feature-title-row">
+            <span class="feature-title">轻盈外观</span>
+            <span class="feature-divider"></span>
+            <span class="feature-tag tag-orange">舒适佩戴</span>
+          </div>
+          <div class="feature-desc">采用人体工学轻薄设计，搭配亲肤皮质接触件，佩戴稳固且舒适。重量仅 38g，长时间使用无压迫感，适合全天候佩戴。</div>
+        </div>
+      </div>
+
+      <!-- 02 视觉核心 -->
+      <div class="feature-card fade">
+        <div class="feature-img-wrap">
+          <div class="img-vision">
+            <div class="camera-body">
+              <div class="camera-lens">📷</div>
+              <div class="camera-flash"></div>
+            </div>
+          </div>
+        </div>
+        <div class="feature-body">
+          <div class="feature-num">02.</div>
+          <div class="feature-title-row">
+            <span class="feature-title">视觉核心</span>
+            <span class="feature-divider"></span>
+            <span class="feature-tag tag-blue">环境重建</span>
+          </div>
+          <div class="feature-desc">搭载高清双目摄像头模组，精准捕捉环境信息，结合 AI 场景识别，为视障者还原真实世界的文字、人脸与障碍物细节。</div>
+        </div>
+      </div>
+
+      <!-- 03 主动安全 -->
+      <div class="feature-card fade">
+        <div class="feature-img-wrap">
+          <div class="img-safety">
+            <div class="safety-ring">🛡️</div>
+          </div>
+        </div>
+        <div class="feature-body">
+          <div class="feature-num">03.</div>
+          <div class="feature-title-row">
+            <span class="feature-title">主动安全</span>
+            <span class="feature-divider"></span>
+            <span class="feature-tag tag-red">夜间防护</span>
+          </div>
+          <div class="feature-desc">机身融入高可见度荧光材质，提升夜间出行辨识度，降低意外风险。配合环境光感应，自动调节反光强度。</div>
+        </div>
+      </div>
+
+      <!-- 04 实时避障 -->
+      <div class="feature-card fade">
+        <div class="feature-img-wrap">
+          <div class="img-radar">
+            <div class="radar-circle r1"></div>
+            <div class="radar-circle r2"></div>
+            <div class="radar-circle r3"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-dot"></div>
+          </div>
+        </div>
+        <div class="feature-body">
+          <div class="feature-num">04.</div>
+          <div class="feature-title-row">
+            <span class="feature-title">实时避障 · 守护</span>
+            <span class="feature-divider"></span>
+            <span class="feature-tag tag-orange">核心功能</span>
+          </div>
+          <div class="feature-desc">集成毫米波雷达，毫秒级检测前方障碍物并通过语音提醒，最远探测距离达 5 米，防止碰撞，让每一步都走得安心。</div>
+        </div>
+      </div>
+
+      <!-- 05 跌倒预警 -->
+      <div class="feature-card fade">
+        <div class="feature-img-wrap">
+          <div class="img-fall">
+            <div style="font-size:3rem">⚠️</div>
+          </div>
+        </div>
+        <div class="feature-body">
+          <div class="feature-num">05.</div>
+          <div class="feature-title-row">
+            <span class="feature-title">跌倒预警 · 陪伴</span>
+            <span class="feature-divider"></span>
+            <span class="feature-tag tag-purple">生命安全</span>
+          </div>
+          <div class="feature-desc">内置六轴传感器，异常跌倒动作自动触发 SOS，精准定位实时推送至家人手机，为意外情况提供快速响应保障。</div>
+        </div>
+      </div>
+
+      <!-- 06 远程协助 -->
+      <div class="feature-card fade">
+        <div class="feature-img-wrap">
+          <div class="img-remote">📞</div>
+        </div>
+        <div class="feature-body">
+          <div class="feature-num">06.</div>
+          <div class="feature-title-row">
+            <span class="feature-title">远程协助 · 连接</span>
+            <span class="feature-divider"></span>
+            <span class="feature-tag tag-green">志愿者网络</span>
+          </div>
+          <div class="feature-desc">一键呼叫志愿者，实时共享第一视角画面，打破空间限制，让专业志愿者随时协助解决生活中的各种难题。</div>
+        </div>
+      </div>
+
+      <!-- 07 AI语音助手 -->
+      <div class="feature-card fade">
+        <div class="feature-img-wrap">
+          <div class="img-ai">
+            <div class="ai-waves">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+        <div class="feature-body">
+          <div class="feature-num">07.</div>
+          <div class="feature-title-row">
+            <span class="feature-title">AI 语音助手 · 陪伴</span>
+            <span class="feature-divider"></span>
+            <span class="feature-tag tag-blue">智能交互</span>
+          </div>
+          <div class="feature-desc">内置联网模组，支持多轮 AI 语音交互，查天气、讲故事、读新闻，时刻陪伴左右，让视障人士感受到温暖与便捷。</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how" class="how-bg">
+  <div style="max-width:1200px;margin:0 auto;text-align:center;">
+    <div style="display:flex;justify-content:center;"><div class="section-label">使用流程</div></div>
+    <div class="section-title" style="text-align:center;">四步启动，即刻守护</div>
+    <div class="section-sub" style="text-align:center;margin-inline:auto;">无需专业知识，10 分钟内完成配置，即刻进入全天候守护模式。</div>
+
+    <div class="steps fade">
+      <div class="step">
+        <div class="step-icon">📦</div>
+        <div class="step-num">STEP 01</div>
+        <div class="step-title">收货开机</div>
+        <div class="step-desc">设备到货后，取出眼镜，长按侧键 3 秒开机，语音引导自动启动。</div>
+      </div>
+      <div class="step">
+        <div class="step-icon">📲</div>
+        <div class="step-num">STEP 02</div>
+        <div class="step-title">绑定 APP</div>
+        <div class="step-desc">扫描镜腿二维码，将设备与家属手机 APP 绑定，设置紧急联系人。</div>
+      </div>
+      <div class="step">
+        <div class="step-icon">⚙️</div>
+        <div class="step-num">STEP 03</div>
+        <div class="step-title">个性设置</div>
+        <div class="step-desc">根据使用习惯，调整语音音量、避障灵敏度、AI 助手唤醒词等偏好。</div>
+      </div>
+      <div class="step">
+        <div class="step-icon">🕶️</div>
+        <div class="step-num">STEP 04</div>
+        <div class="step-title">全天守护</div>
+        <div class="step-desc">佩戴出行，系统自动运行，异常秒级响应，每一步都有启明相伴。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section id="reviews" class="testimonials-bg">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-label">用户评价</div>
+    <div class="section-title">他们都在用启明</div>
+    <div class="section-sub">来自全国视障用户与家属的真实反馈</div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">用了启明之后，我终于可以一个人出门买菜了。避障提醒非常准，有几次都帮我避开了台阶和电动车，家人也安心多了。AI 语音助手每天陪我聊天，感觉不再孤单。</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">👨</div>
+          <div>
+            <div class="author-name">王大叔</div>
+            <div class="author-desc">成都 · 视障用户</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">妈妈视力退化严重，以前出门我们都要陪着。有了启明，雷达避障和远程协助功能让她可以自己出行，跌倒报警功能更是让全家放了大半颗心，真的太实用了。</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">👩</div>
+          <div>
+            <div class="author-name">李女士</div>
+            <div class="author-desc">上海 · 用户家属</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade">
+        <div class="stars">★★★★☆</div>
+        <div class="testimonial-text">视觉还原功能让我惊叹，能读出路牌、识别人脸，买东西扫条码都可以。双目摄像头质量很高，而且戴着很轻，和普通眼镜差不多，出门不会觉得奇怪。</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">🧑</div>
+          <div>
+            <div class="author-name">陈先生</div>
+            <div class="author-desc">北京 · 低视力用户</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section id="contact" class="cta-section">
+  <h2>让<em>光明</em>触手可及</h2>
+  <p>首月免费体验，专属顾问一对一指导适配，不满意全额退款</p>
+  <div class="cta-buttons">
+    <button class="btn-white">立即免费体验</button>
+    <button class="btn-outline-white">咨询专属顾问</button>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-logo"><span>启</span>明 · 智能眼镜</div>
+  <ul class="footer-links">
+    <li><a href="#">隐私政策</a></li>
+    <li><a href="#">服务协议</a></li>
+    <li><a href="#">帮助中心</a></li>
+    <li><a href="#">关于我们</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 启明科技 · 让光明触手可及</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+  setTimeout(() => {
+    document.querySelectorAll('.hero .fade, .stats-strip .fade').forEach(el => el.classList.add('visible'));
+  }, 100);
+</script>
+</body>
+</html>
